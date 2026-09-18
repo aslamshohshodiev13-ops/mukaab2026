@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUKAAB — Авторский надзор</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+    --gold: #ffffff;
+    --blue: rgba(0,81,255,0.40);
+    --blue-h: #2601faaf;
+    --border: rgba(255,255,255,0.07);
+    --muted: rgba(255,255,255,0.55);
+}
+
+body {
+    background: #050505;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    padding-top: 90px;
+}
+
+img { width:100%; display:block; }
+a { text-decoration:none; color:inherit; }
+
+/* ─── NAVBAR ─── */
+.navbar {
+    position: fixed; top:0; left:0;
+    width:100%; height:90px; padding:0 50px;
+    display:flex; align-items:center; justify-content:space-between;
+    z-index:99999;
+    background:rgba(0,0,0,0.185);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(22,15,15,0.103);
+    transition: background .4s, border-color .4s;
+}
+.navbar.scrolled {
+    background:rgba(5,5,5,0.92);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.nav-left { display:flex; gap:24px; }
+.nav-left a { color:#fff; font-size:14px; font-weight:500; opacity:.7; transition:.3s; }
+.nav-left a:hover { opacity:1; }
+
+.logo { position:absolute; left:50%; transform:translateX(-50%); }
+.logo img { width:140px; height:auto; display:block; object-fit:contain; }
+
+.nav-right { display:flex; align-items:center; gap:18px; flex-shrink:0; margin-right:6px; }
+.nav-right a { color:#fff; font-size:14px; opacity:.7; transition:.3s; }
+.nav-right a:hover { opacity:1; }
+
+.lang-switch { display:flex; gap:10px; }
+.lang-switch button {
+    width:42px; height:42px; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.05);
+    color:#fff; cursor:pointer;
+    font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700;
+    transition:.3s;
+}
+.lang-switch button.active { background:#1d4ed8; }
+
+.nav-cta {
+    height:52px; padding:0 24px; border:none; border-radius:999px;
+    background:linear-gradient(135deg,rgba(0,81,255,.95),rgba(37,99,235,.95));
+    color:#fff; font-size:14px; font-weight:700; font-family:'Montserrat',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:.35s; white-space:nowrap;
+    box-shadow:0 12px 35px rgba(37,99,235,.30);
+}
+.nav-cta:hover {
+    transform:translateY(-2px);
+    box-shadow:0 18px 45px rgba(37,99,235,.45);
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+}
+
+.contact-dropdown { position:relative; }
+.contact-menu {
+    position:absolute; top:65px; right:0;
+    width:220px; padding:12px; border-radius:22px;
+    background:rgba(10,10,10,.96); backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.08);
+    display:flex; flex-direction:column; gap:8px;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:.35s; z-index:999;
+}
+.contact-menu.active { opacity:1; visibility:visible; transform:translateY(0); }
+.contact-menu a {
+    height:50px; border-radius:14px;
+    display:flex; align-items:center; padding:0 18px;
+    background:rgba(255,255,255,.03); color:#fff;
+    font-size:14px; font-weight:600; transition:.3s;
+}
+.contact-menu a:hover { background:rgba(0,81,255,.22); transform:translateX(4px); }
+
+/* ─── BURGER ─── */
+.burger {
+    display:none; flex-direction:column; justify-content:center;
+    align-items:center; gap:5px; width:42px; height:42px;
+    border-radius:50%; border:1px solid rgb(0, 0, 0);
+    background:rgba(0, 0, 0, 0.05); cursor:pointer;
+    z-index:1001; transition:background .3s; flex-shrink:0;
+}
+.burger:hover { background:rgba(26, 24, 24, 0.1); }
+.burger span {
+    display:block; width:18px; height:1.5px;
+    background:#fff; border-radius:2px;
+    transition:transform .35s, opacity .35s; transform-origin:center;
+}
+.burger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+.burger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+/* ─── MOBILE MENU ─── */
+.mobile-menu {
+    position:fixed; top:90px; left:0; width:100%;
+    background:rgba(5,5,5,0.98); backdrop-filter:blur(24px);
+    border-bottom:1px solid rgba(255,255,255,0.07);
+    padding:28px 24px 32px;
+    display:flex; flex-direction:column; gap:0;
+    transform:translateY(-110%); opacity:0;
+    transition:transform .4s cubic-bezier(.19,1,.22,1), opacity .35s;
+    z-index:998; pointer-events:none;
+}
+.mobile-menu.open { transform:translateY(0); opacity:1; pointer-events:all; }
+.mobile-menu a {
+    display:block; color:rgba(255,255,255,.72);
+    font-size:15px; font-weight:500; padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    transition:color .25s; letter-spacing:.02em;
+}
+.mobile-menu a:last-of-type { border-bottom:none; }
+.mobile-menu a:hover { color:#fff; }
+
+.mobile-menu-lang {
+    display:flex; gap:10px; margin-top:22px;
+    padding-top:22px; border-top:1px solid rgba(255,255,255,.07);
+}
+.mobile-menu-lang button {
+    width:46px; height:46px; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.05); color:#fff;
+    font-size:13px; font-weight:700; font-family:'Montserrat',sans-serif;
+    cursor:pointer; transition:.3s;
+}
+.mobile-menu-lang button:hover,
+.mobile-menu-lang button.active { background:rgba(0,81,255,.42); border-color:rgba(0,81,255,.5); }
+
+.mobile-contact-dropdown { position:relative; margin-top:18px; }
+.mobile-menu-cta {
+    width:100%; height:54px; margin-top:18px; border:none; border-radius:18px;
+    background:linear-gradient(135deg,rgba(0,81,255,.95),rgba(37,99,235,.95));
+    color:#fff; font-size:15px; font-weight:700; font-family:'Montserrat',sans-serif;
+    cursor:pointer; transition:.35s;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 30px rgba(37,99,235,.28);
+}
+.mobile-menu-cta:hover { transform:translateY(-2px); box-shadow:0 18px 40px rgba(37,99,235,.42); }
+.mobile-contact-menu {
+    display:flex; flex-direction:column; gap:8px; margin-top:12px;
+    opacity:0; visibility:hidden; max-height:0; overflow:hidden; transition:.35s ease;
+}
+.mobile-contact-menu.active { opacity:1; visibility:visible; max-height:300px; }
+.mobile-contact-menu a {
+    height:52px; border-radius:16px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:14px; font-weight:600; transition:.3s;
+}
+.mobile-contact-menu a:hover { background:rgba(0,81,255,.18); border-color:rgba(0,81,255,.28); }
+
+/* ─── HERO ─── */
+.hero {
+    position:relative; height:62vh; min-height:380px; overflow:hidden;
+}
+.hero-image {
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; filter:brightness(.70); transition:transform 8s ease;
+}
+.hero:hover .hero-image { transform:scale(1.04); }
+.hero-overlay {
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,.97) 0%, rgba(0,0,0,.30) 55%, transparent 100%);
+}
+.hero-content { position:absolute; bottom:52px; left:60px; z-index:2; }
+.hero-label {
+    display:block; font-size:11px; letter-spacing:.38em;
+    text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:14px;
+}
+.hero-content h1 {
+    font-size:clamp(40px,6.5vw,80px); font-weight:800;
+    letter-spacing:-.03em; line-height:1.05; margin-bottom:16px;
+}
+.hero-content p { font-size:15px; color:rgba(255,255,255,.60); max-width:520px; line-height:1.7; }
+
+/* ─── SERVICES PANEL ─── */
+.services-panel {
+    max-width:1320px; margin:0 auto;
+    padding:72px 40px 100px;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:18px;
+}
+
+.panel-section-label {
+    grid-column:1/-1; display:flex; align-items:center;
+    gap:20px; margin-top:14px; margin-bottom:4px;
+}
+.panel-section-label span {
+    font-size:10px; letter-spacing:.32em; text-transform:uppercase;
+    color:var(--gold); font-weight:700; white-space:nowrap;
+}
+.panel-section-label::after {
+    content:''; flex:1; height:1px; background:rgba(255,255,255,.07);
+}
+
+/* ─── GLASS CARD ─── */
+.service-box {
+    padding:30px 28px;
+    border:1px solid rgba(255,255,255,0.07);
+    background:rgba(255,255,255,0.025);
+    backdrop-filter:blur(14px);
+    transition:border-color .4s, background .4s;
+    display:flex; flex-direction:column; gap:16px;
+}
+.service-box:hover { border-color:rgba(0,81,255,.30); background:rgba(0,81,255,.04); }
+.service-box.featured { border-color:rgba(200,169,110,.28); background:rgba(200,169,110,.03); }
+.service-box.featured:hover { border-color:rgba(200,169,110,.55); background:rgba(200,169,110,.07); }
+.service-box.wide { grid-column:span 2; }
+.service-box.full { grid-column:1/-1; }
+
+.service-top { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+.service-top h2 { font-size:18px; font-weight:700; line-height:1.25; letter-spacing:-.01em; }
+
+.price { font-size:22px; font-weight:800; letter-spacing:-.02em; color:#fff; white-space:nowrap; line-height:1; }
+.price-sub { font-size:12px; color:var(--muted); font-weight:500; margin-top:2px; white-space:nowrap; }
+.price-block { text-align:right; flex-shrink:0; }
+
+.service-box ul { list-style:none; display:flex; flex-direction:column; gap:0; }
+.service-box ul li {
+    font-size:13px; color:rgba(255,255,255,.62);
+    padding:8px 0 8px 18px; position:relative;
+    border-bottom:1px solid rgba(255,255,255,.04); line-height:1.5;
+}
+.service-box ul li:last-child { border-bottom:none; }
+.service-box ul li::before {
+    content:'—'; position:absolute; left:0;
+    color:var(--gold); font-size:11px; top:10px;
+}
+
+.service-description p { font-size:13px; color:var(--muted); line-height:1.75; }
+
+.service-text .row {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:9px 0; border-bottom:1px solid rgba(255,255,255,.04);
+    font-size:13px; color:rgba(255,255,255,.65);
+}
+.service-text .row:last-child { border-bottom:none; }
+.service-text .row .row-val {
+    font-weight:700; color:#fff; font-size:13px;
+    white-space:nowrap; padding-left:16px; flex-shrink:0;
+}
+
+.premium-note {
+    display:inline-block; padding:8px 16px;
+    background:rgba(200,169,110,.10); border:1px solid rgba(200,169,110,.22);
+    color:var(--gold); font-size:12px; font-weight:600;
+    letter-spacing:.04em; margin-top:4px; align-self:flex-start;
+}
+
+/* result block */
+.result-block {
+    padding:22px 24px;
+    border:1px solid rgba(200,169,110,.18);
+    background:rgba(200,169,110,.04);
+    display:flex; gap:18px; align-items:flex-start;
+}
+.result-icon {
+    font-size:28px; line-height:1; flex-shrink:0; margin-top:2px;
+}
+.result-block p { font-size:13px; color:rgba(255,255,255,.70); line-height:1.8; }
+.result-block strong { color:var(--gold); font-weight:700; }
+
+/* step numbers */
+.step-num {
+    width:28px; height:28px; border-radius:50%;
+    border:1px solid rgba(200,169,110,.30);
+    background:rgba(200,169,110,.06);
+    color:var(--gold); font-size:11px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; letter-spacing:.04em;
+}
+
+.two-col-list { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+
+/* ─── CTA ─── */
+.cta-row {
+    grid-column:1/-1;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:24px; padding:40px 44px;
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.02);
+    flex-wrap:wrap; margin-top:8px;
+}
+.cta-row h3 { font-size:clamp(20px,2.8vw,30px); font-weight:800; letter-spacing:-.02em; margin-bottom:8px; }
+.cta-row p { font-size:14px; color:var(--muted); }
+.cta-btn {
+    height:52px; padding:0 34px; border-radius:50px;
+    background:var(--blue); border:1px solid rgba(255,255,255,.20);
+    color:#fff; font-size:15px; font-family:'Montserrat',sans-serif;
+    font-weight:700; cursor:pointer; transition:.4s;
+    white-space:nowrap; letter-spacing:.04em;
+}
+.cta-btn:hover { background:var(--blue-h); }
+
+/* ─── FOOTER ─── */
+.footer {
+    padding:36px 40px; border-top:1px solid rgba(255,255,255,.07);
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:13px; color:var(--muted); flex-wrap:wrap; gap:12px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1020px){
+    .services-panel { grid-template-columns:1fr 1fr; padding:50px 24px 80px; }
+    .service-box.wide { grid-column:span 2; }
+}
+@media(max-width:1000px){
+    .navbar { display:flex; justify-content:space-between; padding:0 20px; }
+    .nav-left { display:none; }
+    .nav-right { display:none; }
+    .burger { display:flex; }
+    .logo { margin:0 auto; }
+}
+@media(max-width:680px){
+    .services-panel { grid-template-columns:1fr; padding:40px 16px 70px; }
+    .service-box.wide { grid-column:span 1; }
+    .two-col-list { grid-template-columns:1fr; }
+    .hero-content { left:24px; bottom:36px; }
+    .cta-row { padding:28px 24px; flex-direction:column; align-items:flex-start; }
+    .footer { flex-direction:column; align-items:flex-start; padding:28px 20px; }
+    .panel-section-label { grid-column:1; }
+}
+@media(max-width:1024px){#navRightDesktop{display:none !important}}
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<header class="navbar" id="navbar">
+    <div class="nav-left" id="navLeftDesktop">
+        <a href="mukaab.html" data-i18n="nav1">Главная</a>
+        <a href="interior_design.html" data-i18n="nav2">Интерьеры</a>
+        <a href="architecture_service.html" data-i18n="nav3">Архитектура</a>
+    </div>
+
+    <a class="logo" href="mukaab.html">
+        <img src="images/LOGO-2.png" alt="MUKAAB">
+    </a>
+
+    <div class="nav-right">
+      <div id="navRightDesktop" style="display:contents"></div>
+<div class="lang-switch">
+            <button onclick="setLang('ru')" id="btn-ru" class="active">RU</button>
+            <button onclick="setLang('en')" id="btn-en">EN</button>
+        </div>
+        <div class="contact-dropdown">
+            <button class="nav-cta" onclick="toggleContacts()" data-i18n="navCta">Написать нам</button>
+            <div class="contact-menu" id="contactMenu">
+                <a href="https://t.me/mukaab_company" target="_blank">Telegram</a>
+                <a href="https://wa.me/375339161111" target="_blank">WhatsApp</a>
+                <a href="mailto:mukaabcompany@gmail.com" data-i18n="navCta">Написать нам</a>
+            </div>
+        </div>
+    </div>
+
+    <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</header>
+
+<!-- ── MOBILE MENU ── -->
+<nav class="mobile-menu" id="mobileMenu">
+    <div id="navLeftMobile" style="display:contents">
+    <a href="mukaab.html" data-i18n="nav1">Главная</a>
+    <a href="interior_design.html" data-i18n="nav2">Интерьеры</a>
+    <a href="architecture_service.html" data-i18n="nav3">Архитектура</a>
+    <a href="servis.html" data-i18n="nav4">Услуги</a>
+    <a href="portfolio.html" data-i18n="nav5m">Портфолио</a>
+    </div>
+    <div class="mobile-menu-lang">
+        <button onclick="setLang('ru')" id="mob-btn-ru" class="active">RU</button>
+        <button onclick="setLang('en')" id="mob-btn-en">EN</button>
+    </div>
+    <div class="mobile-contact-dropdown">
+        <button class="mobile-menu-cta" onclick="toggleMobileContacts()" data-i18n="navCta">Написать нам</button>
+        <div class="mobile-contact-menu" id="mobileContactMenu">
+            <a href="https://t.me/mukaab_company" target="_blank">Telegram</a>
+            <a href="https://wa.me/375339161111" target="_blank">WhatsApp</a>
+            <a href="mailto:mukaabcompany@gmail.com" data-i18n="navCta">Написать нам</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+    <img src="images/61.png" class="hero-image" id="heroImg" alt=" ">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <span class="hero-label" data-i18n="heroLabel">Услуги</span>
+        <h1 data-i18n="title" id="heroTitle">Авторский надзор</h1>
+        <p data-i18n="subtitle" id="heroSub">Профессиональное сопровождение проекта на всех этапах реализации — от первого выезда до финальной приёмки.</p>
+    </div>
+</section>
+
+<!-- ── PANEL ── -->
+<!-- ── PANEL (заполняется динамически из author.js) ── -->
+<section class="services-panel">
+
+    <div class="panel-section-label"><span data-i18n="sec1">Контроль и соответствие</span></div>
+    <div id="featureContainer" style="display:contents"></div>
+
+    <div class="panel-section-label"><span data-i18n="sec_price">Тарифы</span></div>
+    <div id="pricingContainer" style="display:contents"></div>
+
+    <div class="panel-section-label"><span data-i18n="sec2">Этапы работы</span></div>
+    <div id="stepsContainer" style="display:contents"></div>
+
+    <div class="panel-section-label"><span data-i18n="sec3">Где применяется</span></div>
+    <div id="objectsContainer" style="display:contents"></div>
+    <div id="reportContainer" style="display:contents"></div>
+    <div id="resultContainer" style="display:contents"></div>
+
+    <div class="cta-row">
+        <div>
+            <h3 data-i18n="ctah" id="ctaHeading">Обсудим ваш проект?</h3>
+            <p data-i18n="ctap" id="ctaText">Оставьте заявку — свяжемся в течение часа</p>
+        </div>
+        <button class="cta-btn" data-i18n="ctabtn" id="ctaBtn">Оставить заявку</button>
+    </div>
+
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+    <div id="footerCopyright">© 2026 MUKAAB</div>
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+        <button onclick="openPrivacy()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer;font-family:'Montserrat',sans-serif;transition:.3s;padding:0;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.4)'" data-i18n="privacyLink">Политика конфиденциальности</button>
+    </div>
+</footer>
+
+<!-- ── PRIVACY MODAL ── -->
+<div id="privacyOverlay" style="
+    position:fixed;inset:0;z-index:999999;
+    background:rgba(0,0,0,0.55);backdrop-filter:blur(16px);
+    display:flex;justify-content:center;align-items:center;
+    opacity:0;visibility:hidden;transition:.35s ease;
+">
+<div id="privacyModal" style="
+    width:min(860px,94vw);height:min(780px,90vh);
+    background:rgba(8,8,8,0.96);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:4px; overflow:hidden; position:relative;
+    backdrop-filter:blur(30px);
+    box-shadow:0 40px 100px rgba(0,0,0,0.65),inset 0 1px 0 rgba(255,255,255,0.05);
+    transform:translateY(24px) scale(.97);
+    transition:.45s cubic-bezier(.19,1,.22,1);
+    display:flex; flex-direction:column;
+">
+    <div style="padding:32px 40px 26px;border-bottom:1px solid rgba(255,255,255,0.07);background:linear-gradient(to bottom,rgba(255,255,255,.025),transparent);flex-shrink:0;">
+        <div style="font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#ffffff;font-weight:700;margin-bottom:12px;" data-i18n="pmLabel">Документ</div>
+        <div style="font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.02em;margin-bottom:6px;" data-i18n="pmTitle">Политика конфиденциальности</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.45);">© ООО «Мукааб» · mukaab.by</div>
+    </div>
+    <div id="pmBody" style="padding:32px 40px 40px;overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;"></div>
+    <button onclick="closePrivacy()" style="z-index:2147483647;position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.25s;font-family:'Montserrat',sans-serif;"
+        onmouseover="this.style.transform='rotate(90deg)';this.style.background='rgba(255,255,255,.1)';this.style.color='#fff'"
+        onmouseout="this.style.transform='rotate(0deg)';this.style.background='rgba(255,255,255,.04)';this.style.color='rgba(255,255,255,.6)'">✕</button>
+</div>
+</div>
+
+<script>
+/* ─── PRIVACY MODAL ─── */
+const PM = {
+    ru: { body: `<style>
+#pmBody h2{font-size:22px;font-weight:800;margin-bottom:4px;}
+#pmBody .pm-org{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:28px;}
+#pmBody h3{font-size:15px;font-weight:700;color:#fff;margin:26px 0 10px;padding-left:14px;border-left:2px solid #fff;}
+#pmBody .pm-section:first-of-type h3{margin-top:0;}
+#pmBody p{font-size:13px;color:rgba(255,255,255,.65);line-height:1.85;margin-bottom:10px;}
+#pmBody ul{margin:8px 0 14px;list-style:none;}
+#pmBody ul li{font-size:13px;color:rgba(255,255,255,.62);padding:6px 0 6px 18px;position:relative;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.6;}
+#pmBody ul li:last-child{border-bottom:none;}
+#pmBody ul li::before{content:'—';position:absolute;left:0;color:#fff;font-size:11px;top:8px;}
+#pmBody strong{color:#fff;font-weight:600;}
+#pmBody .pm-section{margin-bottom:30px;padding-bottom:2px;border-bottom:1px solid rgba(255,255,255,.04);}
+#pmBody .pm-contacts{padding:0;margin:14px 0 10px;display:flex;flex-direction:column;gap:8px;}
+#pmBody .pm-contact-row{display:flex;align-items:center;gap:4px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;}
+#pmBody .pm-key{min-width:110px;flex-shrink:0;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.04em;font-size:13px;}
+#pmBody .pm-colon{width:12px;flex-shrink:0;color:rgba(255,255,255,.55);}
+#pmBody .pm-contact-row strong,#pmBody .pm-contact-row a{flex:1;text-align:right;color:#fff;}
+#pmBody a{color:#fff !important;text-decoration:underline;}
+#pmBody a:hover{opacity:.8;}
+</style>
+<div class="pm-section"><h3>Общие положения</h3><p>Настоящая Политика конфиденциальности определяет порядок обработки персональных данных и меры по их защите, предпринимаемые <strong>ООО «Мукааб»</strong> (далее — Оператор), в соответствии с законодательством Республики Беларусь. Оператор уважает право пользователей на неприкосновенность частной жизни и обеспечивает защиту персональных данных при использовании сайта.</p></div>
+<div class="pm-section"><h3>Основные понятия</h3><ul><li><strong>Персональные данные</strong> — любая информация, относящаяся к идентифицированному или идентифицируемому физическому лицу.</li><li><strong>Обработка персональных данных</strong> — любые действия с данными, включая сбор, хранение, использование, передачу и удаление.</li><li><strong>Пользователь</strong> — любое лицо, посещающее сайт.</li></ul></div>
+<div class="pm-section"><h3>Персональные данные, которые мы собираем</h3><ul><li>Имя и фамилия</li><li>Номер телефона</li><li>Адрес электронной почты</li><li>Ссылки на социальные сети</li><li>Фотографии (при передаче)</li><li>IP-адрес, cookies, действия на сайте</li></ul></div>
+<div class="pm-section"><h3>Цели обработки данных</h3><ul><li>Обработка заявок и обратная связь</li><li>Предоставление информации об услугах</li><li>Подготовка коммерческих предложений</li><li>Улучшение работы сайта</li><li>Маркетинговые коммуникации</li></ul></div>
+<div class="pm-section"><h3>Правовые основания обработки</h3><ul><li>Согласие пользователя</li><li>Заключение и исполнение договора</li><li>Требования законодательства Республики Беларусь</li></ul></div>
+<div class="pm-section"><h3>Условия обработки и передачи данных</h3><p>Данные не передаются третьим лицам без согласия пользователя. Исключение — сервисы аналитики и CRM, обеспечивающие работу сайта.</p></div>
+<div class="pm-section"><h3>Срок хранения данных</h3><p>Персональные данные хранятся не дольше, чем необходимо для целей обработки, либо до момента отзыва согласия пользователем.</p></div>
+<div class="pm-section"><h3>Права пользователя</h3><ul><li>Получать информацию о своих персональных данных</li><li>Требовать их изменения или удаления</li><li>Отозвать согласие на обработку</li><li>Ограничить обработку данных</li></ul><p style="margin-top:14px">Для реализации прав: <a href="mailto:mukaabcompany@gmail.com">mukaabcompany@gmail.com</a></p></div>
+<div class="pm-section"><h3>Cookies и аналитика</h3><p>Сайт использует cookies для корректной работы, анализа поведения пользователей и персонализации контента. Пользователь может отключить cookies в настройках браузера.</p></div>
+<div class="pm-section"><h3>Защита данных</h3><p>Оператор принимает необходимые организационные и технические меры для защиты персональных данных от несанкционированного доступа.</p></div>
+<div class="pm-section"><h3>Изменение политики</h3><p>Оператор вправе вносить изменения в настоящую Политику. Актуальная версия всегда доступна на сайте.</p></div>
+<div class="pm-section" style="border-bottom:none;margin-bottom:0"><h3>Контакты</h3><div class="pm-contacts">
+<div class="pm-contact-row"><span class="pm-key">Организация</span><span class="pm-colon">:</span><strong>ООО «Мукааб»</strong></div>
+<div class="pm-contact-row"><span class="pm-key">Email</span><span class="pm-colon">:</span><a href="mailto:mukaabcompany@gmail.com">mukaabcompany@gmail.com</a></div>
+<div class="pm-contact-row"><span class="pm-key">Телефон</span><span class="pm-colon">:</span><a href="tel:+375339161111">+375 (33) 916-11-11</a></div>
+<div class="pm-contact-row"><span class="pm-key">Адрес</span><span class="pm-colon">:</span><strong>Минск, Беларусь</strong></div>
+</div></div>` },
+    en: { body: `<style>
+#pmBody h2{font-size:22px;font-weight:800;margin-bottom:4px;}
+#pmBody .pm-org{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:28px;}
+#pmBody h3{font-size:15px;font-weight:700;color:#fff;margin:26px 0 10px;padding-left:14px;border-left:2px solid #fff;}
+#pmBody .pm-section:first-of-type h3{margin-top:0;}
+#pmBody p{font-size:13px;color:rgba(255,255,255,.65);line-height:1.85;margin-bottom:10px;}
+#pmBody ul{margin:8px 0 14px;list-style:none;}
+#pmBody ul li{font-size:13px;color:rgba(255,255,255,.62);padding:6px 0 6px 18px;position:relative;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.6;}
+#pmBody ul li:last-child{border-bottom:none;}
+#pmBody ul li::before{content:'—';position:absolute;left:0;color:#fff;font-size:11px;top:8px;}
+#pmBody strong{color:#fff;font-weight:600;}
+#pmBody .pm-section{margin-bottom:30px;padding-bottom:2px;border-bottom:1px solid rgba(255,255,255,.04);}
+#pmBody .pm-contacts{padding:0;margin:14px 0 10px;display:flex;flex-direction:column;gap:8px;}
+#pmBody .pm-contact-row{display:flex;align-items:center;gap:4px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;}
+#pmBody .pm-key{min-width:110px;flex-shrink:0;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.04em;font-size:13px;}
+#pmBody .pm-colon{width:12px;flex-shrink:0;color:rgba(255,255,255,.55);}
+#pmBody .pm-contact-row strong,#pmBody .pm-contact-row a{flex:1;text-align:right;color:#fff;}
+#pmBody a{color:#fff !important;text-decoration:underline;}
+#pmBody a:hover{opacity:.8;}
+</style>
+<div class="pm-section"><h3>General Provisions</h3><p>This Privacy Policy defines the procedure for processing personal data and the measures taken to protect it by <strong>Mukaab LLC</strong> (the Operator), in accordance with the legislation of the Republic of Belarus. The Operator respects users' right to privacy and ensures the protection of personal data when using the website.</p></div>
+<div class="pm-section"><h3>Key Definitions</h3><ul><li><strong>Personal Data</strong> — any information relating to an identified or identifiable individual.</li><li><strong>Data Processing</strong> — any actions with data, including collection, storage, use, transfer and deletion.</li><li><strong>User</strong> — any person visiting the website.</li></ul></div>
+<div class="pm-section"><h3>Data We Collect</h3><ul><li>Name and surname</li><li>Phone number</li><li>Email address</li><li>Social media links</li><li>Photos (if provided)</li><li>IP address, cookies, site activity</li></ul></div>
+<div class="pm-section"><h3>Purposes of Processing</h3><ul><li>Processing requests and feedback</li><li>Providing information about services</li><li>Preparing commercial proposals</li><li>Improving website performance</li><li>Marketing communications</li></ul></div>
+<div class="pm-section"><h3>Legal Grounds</h3><ul><li>User consent</li><li>Conclusion and execution of a contract</li><li>Requirements of Belarusian legislation</li></ul></div>
+<div class="pm-section"><h3>Data Transfer</h3><p>Data is not transferred to third parties without user consent, except for analytics services and CRM systems supporting site operations.</p></div>
+<div class="pm-section"><h3>Retention Period</h3><p>Personal data is stored no longer than necessary for processing purposes, or until the user withdraws consent.</p></div>
+<div class="pm-section"><h3>User Rights</h3><ul><li>Access information about your personal data</li><li>Request its correction or deletion</li><li>Withdraw consent to processing</li><li>Restrict data processing</li></ul><p style="margin-top:14px">To exercise these rights: <a href="mailto:mukaabcompany@gmail.com">mukaabcompany@gmail.com</a></p></div>
+<div class="pm-section"><h3>Cookies &amp; Analytics</h3><p>The website uses cookies for correct functioning, user behaviour analysis and content personalisation. Users can disable cookies in their browser settings.</p></div>
+<div class="pm-section"><h3>Data Security</h3><p>The Operator takes the necessary organisational and technical measures to protect personal data from unauthorised access.</p></div>
+<div class="pm-section"><h3>Policy Updates</h3><p>The Operator may amend this Policy. The current version is always available on the website.</p></div>
+<div class="pm-section" style="border-bottom:none;margin-bottom:0"><h3>Contacts</h3><div class="pm-contacts">
+<div class="pm-contact-row"><span class="pm-key">Company</span><span class="pm-colon">:</span><strong>Mukaab LLC</strong></div>
+<div class="pm-contact-row"><span class="pm-key">Email</span><span class="pm-colon">:</span><a href="mailto:mukaabcompany@gmail.com">mukaabcompany@gmail.com</a></div>
+<div class="pm-contact-row"><span class="pm-key">Phone</span><span class="pm-colon">:</span><a href="tel:+375339161111">+375 (33) 916-11-11</a></div>
+<div class="pm-contact-row"><span class="pm-key">Address</span><span class="pm-colon">:</span><strong>Minsk, Belarus</strong></div>
+</div></div>` }
+};
+
+/* ─── i18n ─── */
+const T = {
+    ru: {
+        nav1:'Главная', nav2:'Интерьеры', nav3:'Архитектура', nav4:'Услуги', nav5m:'Портфолио',
+        navCta:'Написать нам',
+        heroLabel:'Услуги',
+        title:'Авторский надзор',
+        subtitle:'Профессиональное сопровождение проекта на всех этапах реализации — от первого выезда до финальной приёмки.',
+        sec1:'Контроль и соответствие',
+        sec2:'Этапы работы',
+        sec3:'Где применяется',
+        s1h:'Выезды на объект',
+        s1a:'Регулярные плановые визиты',
+        s1b:'Контроль соответствия работ проекту',
+        s1c:'Проверка качества выполнения',
+        s1d:'Контроль применения материалов',
+        s2h:'Рабочая документация',
+        s2a:'Внесение корректировок по факту',
+        s2b:'Оперативное решение проектных вопросов',
+        s2c:'Согласование изменений с заказчиком',
+        s2d:'Актуализация чертежей и спецификаций',
+        s3h:'Полное сопровождение объекта',
+        s3desc:'Комплексный авторский надзор от начала строительства до финальной сдачи объекта:',
+        s3a:'Регулярные выезды на объект',
+        s3b:'Контроль всех строительных работ',
+        s3c:'Консультации подрядчиков и строителей',
+        s3d:'Координация смежных специалистов',
+        s3e:'Фото- и видеоотчёты о ходе работ',
+        s3f:'Участие в приёмке выполненных работ',
+        s3g:'Контроль сроков выполнения работ',
+        s3h2:'Сопровождение до завершения строительства',
+        steps_h:'Как проходит авторский надзор',
+        step1:'Знакомство с проектом и подрядчиками',
+        step2:'Составление графика выездов на объект',
+        step3:'Регулярный контроль хода строительства',
+        step4:'Фиксация замечаний и внесение корректировок',
+        step5:'Координация и решение проектных вопросов',
+        step6:'Финальная приёмка и закрытие объекта',
+        obj_h:'Типы объектов',
+        obj1:'Частные дома и виллы',
+        obj2:'Квартиры и апартаменты',
+        obj3:'Коммерческие объекты',
+        obj4:'Рестораны и кафе',
+        obj5:'Офисные помещения',
+        obj6:'Гостиничные комплексы',
+        rep_h:'Отчётность заказчику',
+        rep1:'Фотофиксация каждого выезда',
+        rep2:'Видеоотчёты о ходе строительства',
+        rep3:'Письменные замечания подрядчикам',
+        rep4:'Сводные акты по итогам проверок',
+        rep_note:'Прозрачность на каждом этапе',
+        res_h:'Результат',
+        res_text:'Гарантия того, что реализованный объект будет полностью соответствовать <strong>архитектурной концепции</strong>, проектной документации и <strong>стандартам качества</strong>. Вы получаете объект именно таким, каким он был задуман — без отступлений от проекта и скрытых дефектов.',
+        ctah:'Обсудим ваш проект?',
+        ctap:'Оставьте заявку — свяжемся в течение часа',
+        ctabtn:'Оставить заявку',
+        footsub:'Premium Architecture Studio'
+    },
+    en: {
+        nav1:'Home', nav2:'Interiors', nav3:'Architecture', nav4:'Services', nav5m:'Portfolio',
+        navCta:'Contact Us',
+        heroLabel:'Services',
+        title:'Construction Supervision',
+        subtitle:'Professional project management at every stage of realisation — from the first site visit to final sign-off.',
+        sec1:'Control & Compliance',
+        sec2:'How We Work',
+        sec3:'Applications',
+        s1h:'Site Visits',
+        s1a:'Regular scheduled inspections',
+        s1b:'Compliance with approved drawings',
+        s1c:'Quality control of workmanship',
+        s1d:'Verification of specified materials',
+        s2h:'Working Documentation',
+        s2a:'On-site corrections and amendments',
+        s2b:'Prompt resolution of design queries',
+        s2c:'Change approval with the client',
+        s2d:'Drawing and specification updates',
+        s3h:'Full Project Supervision',
+        s3desc:'Comprehensive construction supervision from groundbreaking to final handover:',
+        s3a:'Regular site visits',
+        s3b:'Control of all construction works',
+        s3c:'Advice to contractors and builders',
+        s3d:'Coordination of specialist trades',
+        s3e:'Photo and video progress reports',
+        s3f:'Participation in works sign-off',
+        s3g:'Monitoring of programme and deadlines',
+        s3h2:'Support until construction completion',
+        steps_h:'Supervision Process',
+        step1:'Project and contractor briefing',
+        step2:'Scheduling site visits',
+        step3:'Ongoing construction monitoring',
+        step4:'Recording issues and implementing corrections',
+        step5:'Coordination and resolution of design matters',
+        step6:'Final inspection and project close-out',
+        obj_h:'Project Types',
+        obj1:'Private houses and villas',
+        obj2:'Apartments and serviced units',
+        obj3:'Commercial properties',
+        obj4:'Restaurants and cafés',
+        obj5:'Office spaces',
+        obj6:'Hotel complexes',
+        rep_h:'Client Reporting',
+        rep1:'Photo documentation of every visit',
+        rep2:'Video progress updates',
+        rep3:'Written notices to contractors',
+        rep4:'Summary inspection reports',
+        rep_note:'Full transparency at every stage',
+        res_h:'Outcome',
+        res_text:'A guarantee that the completed project fully conforms to the <strong>architectural concept</strong>, project documentation and <strong>quality standards</strong>. You receive the building exactly as designed — with no deviations and no hidden defects.',
+        ctah:'Shall we discuss your project?',
+        ctap:"Leave a request — we'll respond within the hour",
+        ctabtn:'Send a request',
+        footsub:'Premium Architecture Studio'
+    }
+};
+
+let lang = 'ru';
+
+function toggleMenu() {
+    const menu   = document.getElementById('mobileMenu');
+    const burger = document.getElementById('burger');
+    const open   = menu.classList.toggle('open');
+    burger.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+}
+
+document.querySelectorAll('.mobile-menu a').forEach(a => {
+    a.addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.remove('open');
+        document.getElementById('burger').classList.remove('open');
+        document.body.style.overflow = '';
+    });
+});
+
+function setLang(l) {
+    lang = l;
+    document.getElementById('btn-ru').classList.toggle('active', l === 'ru');
+    document.getElementById('btn-en').classList.toggle('active', l === 'en');
+    document.getElementById('mob-btn-ru').classList.toggle('active', l === 'ru');
+    document.getElementById('mob-btn-en').classList.toggle('active', l === 'en');
+
+    const merged = Object.assign({}, T[l], PM[l]);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (merged[k] !== undefined) el.innerHTML = merged[k];
+    });
+
+    const overlay = document.getElementById('privacyOverlay');
+    if (overlay && overlay.style.visibility === 'visible') {
+        document.getElementById('pmBody').innerHTML = PM[l].body;
+    }
+
+    localStorage.setItem('lang', l);
+}
+
+function toggleContacts() {
+    document.getElementById('contactMenu').classList.toggle('active');
+}
+
+document.addEventListener('click', (e) => {
+    const dropdown = document.querySelector('.contact-dropdown');
+    const menu = document.getElementById('contactMenu');
+    if (!dropdown.contains(e.target)) menu.classList.remove('active');
+});
+
+function openPrivacy() {
+    const overlay = document.getElementById('privacyOverlay');
+    const modal   = document.getElementById('privacyModal');
+    document.getElementById('pmBody').innerHTML = PM[lang].body;
+    overlay.style.opacity = '1';
+    overlay.style.visibility = 'visible';
+    modal.style.transform = 'translateY(0) scale(1)';
+    document.body.style.overflow = 'hidden';
+}
+
+function closePrivacy() {
+    const overlay = document.getElementById('privacyOverlay');
+    const modal   = document.getElementById('privacyModal');
+    overlay.style.opacity = '0';
+    overlay.style.visibility = 'hidden';
+    modal.style.transform = 'translateY(24px) scale(.97)';
+    document.body.style.overflow = '';
+}
+
+document.getElementById('privacyOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closePrivacy();
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrivacy(); });
+
+function toggleMobileContacts() {
+    document.getElementById('mobileContactMenu').classList.toggle('active');
+}
+
+window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+const saved = localStorage.getItem('lang');
+if (saved) setLang(saved);
+
+// ══════════════════════════════════════════════════════════
+// Контент страницы подтягивается из админ-панели (type=supervision)
+// ══════════════════════════════════════════════════════════
+const SUP_API = "mukaab-admin-backend/public/list.php?type=supervision";
+let SUP_ITEMS = [];
+
+function supEsc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function supStat(item, key){ const arr = item['stats_'+lang] || []; const f = arr.find(s=>s.label===key); return f ? f.value : ''; }
+
+async function loadSupervisionContent() {
+  try {
+    const res = await fetch(SUP_API, { cache: 'no-store' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    SUP_ITEMS = data.items || [];
+    renderSupervisionContent();
+  } catch (e) {
+    // бэкенд недоступен — секции останутся пустыми, пока не заполнены в админке (см. migration_003_supervision_seed.sql)
+  }
+}
+
+function renderSupervisionContent() {
+  const byCat = c => SUP_ITEMS.filter(i => i.filter_cat === c);
+
+  // Hero — переопределяем только если есть опубликованный элемент с filter_cat=hero
+  const hero = byCat('hero')[0];
+  if (hero) {
+    const t = hero['title_'+lang] || hero.title_ru;
+    const d = hero['description_'+lang] || hero.description_ru;
+    if (t) document.getElementById('heroTitle').textContent = t;
+    if (d) document.getElementById('heroSub').textContent = d;
+    if (hero.image) {
+    const heroEl = document.getElementById('heroImg');
+    if (/\.(mp4|webm|mov)$/i.test(hero.image)) {
+      const v = document.createElement('video');
+      v.id = 'heroImg'; v.className = heroEl.className;
+      v.autoplay = true; v.muted = true; v.loop = true; v.playsInline = true;
+      v.src = hero.image;
+      heroEl.replaceWith(v);
+    } else {
+      heroEl.src = hero.image;
+    }
+  }
+  }
+
+  // Карточки функций / тарифов — одинаковый шаблон
+  function renderCard(item) {
+    const title = supEsc(item['title_'+lang] || item.title_ru);
+    const price = supStat(item, 'price');
+    const unit = supStat(item, 'unit');
+    const priceBlock = price ? `<div class="price-block"><div class="price">${supEsc(price)}</div><div class="price-sub">${supEsc(unit)}</div></div>` : '';
+    const desc = item['description_'+lang] || item.description_ru;
+    const reqs = item['requirements_'+lang] || [];
+    const note = item['note_'+lang] || item.note_ru || '';
+    const wide = item.featured ? ' wide featured' : '';
+    const descHtml = desc ? `<div class="service-description"><p>${supEsc(desc)}</p></div>` : '';
+    const listHtml = reqs.length ? `<ul${item.featured?' class="two-col-list"':''}>${reqs.map(r=>`<li>${supEsc(r)}</li>`).join('')}</ul>` : '';
+    const noteHtml = note ? `<div class="premium-note">${supEsc(note)}</div>` : '';
+    return `<div class="service-box${wide}"><div class="service-top"><h2>${title}</h2>${priceBlock}</div>${descHtml}${listHtml}${noteHtml}</div>`;
+  }
+  const features = byCat('feature');
+  document.getElementById('featureContainer').innerHTML = features.length ? features.map(renderCard).join('') : '';
+
+  const pricing = byCat('pricing');
+  document.getElementById('pricingContainer').innerHTML = pricing.length ? pricing.map(renderCard).join('') : '';
+
+  // Шаги — одна карточка "full" с нумерованными строками
+  const steps = byCat('step');
+  if (steps.length) {
+    const rows = steps.map((s,i)=>`<div class="row"><span>${supEsc(s['title_'+lang]||s.title_ru)}</span><span class="row-val">${String(i+1).padStart(2,'0')}</span></div>`).join('');
+    document.getElementById('stepsContainer').innerHTML = `<div class="service-box full"><div class="service-top"><h2>${lang==='ru'?'Как проходит авторский надзор':'Supervision Process'}</h2></div><div class="service-text">${rows}</div></div>`;
+  }
+
+  // Типы объектов — простой список строк
+  const objects = byCat('object');
+  if (objects.length) {
+    const rows = objects.map(o=>`<div class="row"><span>${supEsc(o['title_'+lang]||o.title_ru)}</span></div>`).join('');
+    document.getElementById('objectsContainer').innerHTML = `<div class="service-box"><div class="service-top"><h2>${lang==='ru'?'Типы объектов':'Project Types'}</h2></div><div class="service-text">${rows}</div></div>`;
+  }
+
+  // Отчётность
+  const report = byCat('report');
+  if (report.length) {
+    const items = report.map(r=>`<li>${supEsc(r['title_'+lang]||r.title_ru)}</li>`).join('');
+    const note = report[0]['note_'+lang] || report[0].note_ru || '';
+    document.getElementById('reportContainer').innerHTML = `<div class="service-box"><div class="service-top"><h2>${lang==='ru'?'Отчётность заказчику':'Client Reporting'}</h2></div><ul>${items}</ul>${note?`<div class="premium-note">${supEsc(note)}</div>`:''}</div>`;
+  }
+
+  // Итог
+  const result = byCat('result')[0];
+  if (result) {
+    const text = result['description_'+lang] || result.description_ru;
+    document.getElementById('resultContainer').innerHTML = `<div class="service-box full featured"><div class="service-top"><h2>${supEsc(result['title_'+lang]||result.title_ru)}</h2></div><div class="result-block"><div class="result-icon">✦</div><p>${text}</p></div></div>`;
+  }
+
+  // CTA-блок
+  const cta = byCat('cta')[0];
+  if (cta) {
+    const h = cta['title_'+lang] || cta.title_ru;
+    const p = cta['description_'+lang] || cta.description_ru;
+    const btn = cta['note_'+lang] || cta.note_ru;
+    if (h) document.getElementById('ctaHeading').textContent = h;
+    if (p) document.getElementById('ctaText').textContent = p;
+    if (btn) document.getElementById('ctaBtn').textContent = btn;
+  }
+}
+
+const _origSetLangSup = setLang;
+window.setLang = function(l) { _origSetLangSup(l); if (SUP_ITEMS.length) renderSupervisionContent(); };
+
+loadSupervisionContent();
+</script>
+<script src="contact-widget.js"></script>
+  <script>
+  (function(){
+    function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+    window._navPageItems = null;
+    if (typeof setLang === 'function' && !window._navSetLangWrapped) {
+      window._navSetLangWrapped = true;
+      const _origSetLangForNav = setLang;
+      window.setLang = function(l) { _origSetLangForNav(l); if (window._renderNavPage) window._renderNavPage(l); };
+    }
+    window._renderNavPage = function(l){
+      const items = window._navPageItems;
+      if (!items || !items.length) return;
+      const build = arr => arr.map(x => `<a href="${esc(x.location||'#')}">${esc(x['title_'+l]||x.title_ru)}</a>`).join('');
+      const desktop = document.getElementById('navLeftDesktop');
+      const mobile = document.getElementById('navLeftMobile');
+      const right = document.getElementById('navRightDesktop');
+      if (desktop) desktop.innerHTML = build(items.slice(0, 3));
+      if (right) right.innerHTML = build(items.slice(3));
+      if (mobile) mobile.innerHTML = build(items);
+    };
+    fetch('mukaab-admin-backend/public/list.php?type=nav_author6', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => {
+        window._navPageItems = d.items || [];
+        const l = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'ru';
+        window._renderNavPage(l);
+      })
+      .catch(()=>{});
+  })();
+  </script>
+</body>
+</html>

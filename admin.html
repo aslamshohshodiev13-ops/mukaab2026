@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MUKAAB ADMIN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div id="loginScreen" class="login-body">
+<form id="loginForm" class="login-card">
+<div class="login-brand"><div class="login-logo">MUKAAB</div><div class="login-tag">ADMIN PANEL</div></div>
+<div class="login-divider"></div>
+<label class="field"><span class="field-label">Логин</span><input id="login" autocomplete="username" placeholder="Введите логин" required></label>
+<label class="field"><span class="field-label">Пароль</span><div class="pw-wrap"><input id="password" type="password" autocomplete="current-password" placeholder="Введите пароль" required><button type="button" id="togglePassword">◉</button></div></label>
+<div id="loginError" class="error-box hidden">Неверный логин или пароль.</div>
+<label class="remember-row"><input id="remember" type="checkbox"> Запомнить меня</label>
+<button class="btn-gold btn-block">Войти</button><div class="forgot-link" id="forgot">Забыли пароль?</div>
+</form></div>
+
+<div id="app" class="app hidden">
+<aside class="sidebar">
+<div class="sidebar-brand"><div class="login-logo">MUKAAB</div><div class="login-tag">ADMIN</div></div><div class="sidebar-divider"></div>
+<nav class="sidebar-nav">
+<button class="nav-item active" data-page="dashboard">⌂ <span>Главная</span></button>
+<button class="nav-item" data-page="portfolio">▣ <span>Портфолио</span><b>8</b></button>
+<button class="nav-item" data-page="services">◇ <span>Услуги</span><b>6</b></button>
+<button class="nav-item" data-page="architecture">⌂ <span>Архитектура</span></button>
+<button class="nav-item" data-page="interior">◈ <span>Дизайн интерьера</span></button>
+<button class="nav-item" data-page="furniture">▤ <span>Мебель</span></button>
+<button class="nav-item" data-page="viz">▧ <span>3D-визуализация</span></button>
+<button class="nav-item" data-page="supervision">✓ <span>Авторский надзор</span></button>
+<button class="nav-item" data-page="designer">✦ <span>Designer Day</span></button>
+<button class="nav-item" data-page="vacancies">♙ <span>Вакансии</span><b>3</b></button>
+<button class="nav-item" data-page="media">▧ <span>Медиа</span><b>126</b></button>
+<button class="nav-item" data-page="applications">✉ <span>Заявки</span><b id="appsBadge" style="display:none">0</b></button>
+<button class="nav-item" data-page="contacts">☎ <span>Контакты</span></button>
+<button class="nav-item" data-page="homepage">🏠 <span>Главная страница</span></button>
+<button class="nav-item" data-page="settings">⚙ <span>Настройки</span></button>
+</nav>
+<div class="sidebar-footer"><button id="logout" class="btn-ghost btn-block">Выйти</button></div>
+</aside>
+<main class="content">
+<header class="topbar"><div><span class="crumb">MUKAAB / ADMIN</span><h1 id="pageTitle">Главная</h1><p id="pageSubtitle">Обзор содержимого сайта</p></div>
+<div class="top-actions"><button class="icon-btn" id="searchBtn">⌕</button><button class="icon-btn" id="bellBtn">♧</button><div class="admin-user"><span class="avatar">A</span><span>Администратор</span></div></div></header>
+<div id="pageContent"></div>
+</main></div>
+<div id="modalRoot"></div><div id="toastRoot"></div>
+<script src="admin.js"></script>
+</body></html>

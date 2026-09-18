@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUKAAB — Архитектура</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="architecture_service.css">
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<header class="navbar" id="navbar">
+
+    <!-- LEFT -->
+    <div class="nav-left" id="navLeftDesktop">
+        <a href="mukaab.html" data-i18n="nav1">Главная</a>
+        <a href="interior_design.html" data-i18n="nav2">Интерьеры</a>
+        <a href="Author6.html" data-i18n="nav3">Авторский надзор</a>
+    </div>
+
+    <!-- CENTER logo -->
+    <a class="logo" href="mukaab.html">
+        <img src="images/LOGO-2.png" alt="MUKAAB">
+    </a>
+
+   <!-- RIGHT -->
+<div class="nav-right">
+      <div id="navRightDesktop" style="display:contents"></div>
+<!-- LANGUAGE -->
+    <div class="lang-switch">
+
+        <button onclick="setLang('ru')" id="btn-ru" class="active">
+            RU
+        </button>
+
+        <button onclick="setLang('en')" id="btn-en">
+            EN
+        </button>
+
+    </div>
+
+    <div class="contact-dropdown">
+
+        <button class="nav-cta" onclick="toggleContacts()" data-i18n="navCta">
+            Написать
+        </button>
+        <div class="contact-menu" id="contactMenu">
+    
+            <a href="https://t.me/mukaab_company" target="_blank">
+                Telegram
+            </a>
+    
+            <a href="https://wa.me/375339161111" target="_blank">
+                WhatsApp
+            </a>
+    
+            <a href="mailto:mukaabcompany@gmail.com">
+                Написаь нам
+            </a>
+    
+        </div>
+    
+    </div>
+</div>
+</header>
+
+    <!-- Burger (mobile only) -->
+    <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+
+</header>
+
+<!-- ── MOBILE MENU ── -->
+<nav class="mobile-menu" id="mobileMenu">
+
+    <div id="navLeftMobile" style="display:contents">
+<a href="mukaab.html" data-i18n="nav1">Главная</a>
+    <a href="interior_design.html" data-i18n="nav2">Интерьеры</a>
+    <a href="Author6.html" data-i18n="nav3">Авторский надзор</a>
+    <a href="servis.html" data-i18n="nav4">Услуги</a>
+    <a href="#" data-i18n="nav5m">Портфолио</a>
+</div>
+
+    <div class="mobile-menu-lang">
+
+        <button onclick="setLang('ru')" id="mob-btn-ru" class="active">
+            RU
+        </button>
+
+        <button onclick="setLang('en')" id="mob-btn-en">
+            EN
+        </button>
+
+    </div>
+
+    <!-- MOBILE CONTACTS -->
+    <div class="mobile-contact-dropdown">
+
+        <button class="mobile-menu-cta"
+        onclick="toggleMobileContacts()"
+        data-i18n="navCta">
+    
+            Написать нам
+    
+        </button>
+    
+        <div class="mobile-contact-menu" id="mobileContactMenu">
+    
+            <a href="https://t.me/mukaab_company" target="_blank">
+                Telegram
+            </a>
+    
+            <a href="https://wa.me/375339161111" target="_blank">
+                WhatsApp
+            </a>
+    
+            <a href="#" onclick="if(window.openContactModal){openContactModal();return false;}">
+                Написать нам
+            </a>
+    
+        </div>
+    
+    </div>
+    
+    </nav>
+    
+    <section class="hero">
+
+    <img src="images\3.jpg" class="hero-image" id="heroImg" alt="Архитектура">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+    
+        <h1 data-i18n="title" id="heroTitle">Архитектура</h1>
+        <p data-i18n="subtitle" id="heroSub">Полный цикл создания жилых и общественных зданий: от идеи до сдачи ключей.</p>
+    </div>
+
+</section>
+
+<!-- ── PANEL ── -->
+<section class="services-panel">
+
+
+<!-- ── PANEL (заполняется динамически из architecture_service.js) ── -->
+<div class="panel-section-label"><span data-i18n="sec1">Архитектурное проектирование</span></div>
+<div id="designContainer" style="display:contents"></div>
+
+<div class="panel-section-label"><span data-i18n="sec2">3D-визуализация</span></div>
+<div id="viz3dContainer" style="display:contents"></div>
+
+<div class="panel-section-label"><span data-i18n="sec3">Индивидуальные изделия из металла</span></div>
+<div class="service-box full" id="materialsCard" style="display:none">
+    <div class="service-top"><h2 data-i18n="m0h">Материалы</h2></div>
+    <div class="materials-grid" id="materialsGrid"></div>
+</div>
+<div id="metalContainer" style="display:contents"></div>
+
+    <div class="cta-row">
+        <div>
+            <h3 data-i18n="ctah">Обсудим ваш проект?</h3>
+            <p data-i18n="ctap">Оставьте заявку — свяжемся в течение часа</p>
+        </div>
+        <button class="cta-btn" data-i18n="ctabtn">Оставить заявку</button>
+    </div>
+
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+    <div id="footerCopyright">© 2026 MUKAAB</div>
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+        <button onclick="openPrivacy()" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer;font-family:'Montserrat',sans-serif;transition:.3s;padding:0;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.4)'" data-i18n="privacyLink">Политика конфиденциальности</button>
+    </div>
+</footer>
+
+<!-- ── PRIVACY MODAL ── -->
+<div id="privacyOverlay" style="
+    position:fixed;inset:0;z-index:999999;
+    background:rgba(0,0,0,0.55);backdrop-filter:blur(16px);
+    display:flex;justify-content:center;align-items:center;
+    opacity:0;visibility:hidden;transition:.35s ease;
+">
+<div id="privacyModal" style="
+    width:min(860px,94vw);height:min(780px,90vh);
+    background:rgba(8,8,8,0.96);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:4px;
+    overflow:hidden;position:relative;
+    backdrop-filter:blur(30px);
+    box-shadow:0 40px 100px rgba(0,0,0,0.65),inset 0 1px 0 rgba(255,255,255,0.05);
+    transform:translateY(24px) scale(.97);
+    transition:.45s cubic-bezier(.19,1,.22,1);
+    display:flex;flex-direction:column;
+">
+
+    <!-- Modal header -->
+    <div style="
+        padding:32px 40px 26px;
+        border-bottom:1px solid rgba(255,255,255,0.07);
+        background:linear-gradient(to bottom,rgba(255,255,255,.025),transparent);
+        flex-shrink:0;
+    ">
+        <div style="font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#ffffff;font-weight:700;margin-bottom:12px;" data-i18n="pmLabel">Документ</div>
+        <div style="font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.02em;margin-bottom:6px;" data-i18n="pmTitle">Политика конфиденциальности</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.45);">© ООО «Мукааб» · mukaab.by</div>
+    </div>
+
+    <!-- Modal body scroll -->
+    <div id="pmBody" style="padding:32px 40px 40px;overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;">
+        <!-- injected by JS -->
+    </div>
+
+    <!-- Close button -->
+    <button onclick="closePrivacy()" style="z-index:2147483647;
+        position:absolute;top:20px;right:20px;
+        width:40px;height:40px;border-radius:50%;
+        border:1px solid rgba(255,255,255,.09);
+        background:rgba(255,255,255,.04);
+        color:rgba(255,255,255,.6);font-size:18px;
+        cursor:pointer;display:flex;align-items:center;justify-content:center;
+        transition:.25s;font-family:'Montserrat',sans-serif;
+    " onmouseover="this.style.transform='rotate(90deg)';this.style.background='rgba(255,255,255,.1)';this.style.color='#fff'"
+       onmouseout="this.style.transform='rotate(0deg)';this.style.background='rgba(255,255,255,.04)';this.style.color='rgba(255,255,255,.6)'">✕</button>
+
+</div>
+</div>
+
+<script src="architecture_service.js"></script>
+<script src="contact-widget.js"></script>
+  <script>
+  (function(){
+    function esc(s){return (s??'').toString().replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+    window._navPageItems = null;
+    if (typeof setLang === 'function' && !window._navSetLangWrapped) {
+      window._navSetLangWrapped = true;
+      const _origSetLangForNav = setLang;
+      window.setLang = function(l) { _origSetLangForNav(l); if (window._renderNavPage) window._renderNavPage(l); };
+    }
+    window._renderNavPage = function(l){
+      const items = window._navPageItems;
+      if (!items || !items.length) return;
+      const build = arr => arr.map(x => `<a href="${esc(x.location||'#')}">${esc(x['title_'+l]||x.title_ru)}</a>`).join('');
+      const desktop = document.getElementById('navLeftDesktop');
+      const mobile = document.getElementById('navLeftMobile');
+      const right = document.getElementById('navRightDesktop');
+      if (desktop) desktop.innerHTML = build(items.slice(0, 3));
+      if (right) right.innerHTML = build(items.slice(3));
+      if (mobile) mobile.innerHTML = build(items);
+    };
+    fetch('mukaab-admin-backend/public/list.php?type=nav_architecture', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => {
+        window._navPageItems = d.items || [];
+        const l = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'ru';
+        window._renderNavPage(l);
+      })
+      .catch(()=>{});
+  })();
+  </script>
+</body>
+</html>
